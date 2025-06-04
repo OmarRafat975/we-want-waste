@@ -27,7 +27,11 @@ const SkipCard = ({
     >
       <div className="relative">
         <div className="h-48 flex items-center justify-center rounded-t-xl">
-          <img src={imgLink} alt="" className={`w-full h-full rounded-t-xl`} />
+          <img
+            src={imgLink}
+            alt={`${capacity} Yard Skip`}
+            className={`w-full h-full rounded-t-xl`}
+          />
         </div>
         <div className="absolute top-3 right-3">
           <span className="bg-emerald-600 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
@@ -35,13 +39,11 @@ const SkipCard = ({
           </span>
         </div>
         {(!allowedOnRoad || !allowsHeavyWaste) && (
-          <>
-            <div className="absolute top-3 left-3 group">
-              <span className="bg-yellow-500 text-white p-2 flex items-center justify-center rounded-full text-sm font-medium">
-                <TriangleAlert className="text-red-500 size-4" />
-              </span>
-            </div>
-          </>
+          <div className="absolute top-3 left-3 group">
+            <span className="bg-yellow-500 text-white p-2 flex items-center justify-center rounded-full text-sm font-medium">
+              <TriangleAlert className="text-red-500 size-4" />
+            </span>
+          </div>
         )}
       </div>
 
