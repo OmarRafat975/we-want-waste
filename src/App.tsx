@@ -4,16 +4,19 @@ import SkipCard from "./components/SkipCard";
 import Button from "./components/ui/Button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type skip from "./types/skipType";
-import logo from "../public/wewantwaste.png";
+import logo from "/wewantwaste.png";
+import Loader from "./components/ui/Loader";
 
 function App() {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [selectedSkip, setSelectedSkip] = useState<number>();
   const [skipOptions, setSkipOptions] = useState<skip[]>([]);
+  const [isloading, setIsloading] = useState<boolean>(false);
 
   const fetchSkipData = useCallback(
     async function fetchSkipData() {
       try {
+        setIsloading(true);
         const response = await fetch(
           `${backendUrl}skips/by-location?postcode=NR32&area=Lowestoft`
         );
@@ -31,6 +34,8 @@ function App() {
         return responseData;
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsloading(false);
       }
     },
     [backendUrl, setSkipOptions]
@@ -56,28 +61,32 @@ function App() {
             Select the skip size that best suits your needs
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {skipOptions.map((skip) => (
-            <SkipCard
-              key={skip.id}
-              capacity={skip.size}
-              hirePeriod={skip.hire_period_days}
-              price={skip.price_before_vat}
-              allowedOnRoad={skip.allowed_on_road}
-              allowsHeavyWaste={skip.allows_heavy_waste}
-              isSelected={selectedSkip === skip.id}
-              onSelect={() => {
-                if (selectedSkip === skip.id) {
-                  setSelectedSkip(-1);
-                  return;
-                } else {
-                  setSelectedSkip(skip.id);
-                  return;
-                }
-              }}
-            />
-          ))}
-        </div>
+        {isloading ? (
+          <Loader />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {skipOptions.map((skip) => (
+              <SkipCard
+                key={skip.id}
+                capacity={skip.size}
+                hirePeriod={skip.hire_period_days}
+                price={skip.price_before_vat}
+                allowedOnRoad={skip.allowed_on_road}
+                allowsHeavyWaste={skip.allows_heavy_waste}
+                isSelected={selectedSkip === skip.id}
+                onSelect={() => {
+                  if (selectedSkip === skip.id) {
+                    setSelectedSkip(-1);
+                    return;
+                  } else {
+                    setSelectedSkip(skip.id);
+                    return;
+                  }
+                }}
+              />
+            ))}
+          </div>
+        )}
         <div className="flex justify-between items-center gap-2">
           <Button variant="outline">
             <ArrowLeft className="w-4 h-4 mt-1 mr-2 group-hover:-translate-x-2 duration-300" />
